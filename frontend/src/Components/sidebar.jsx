@@ -21,7 +21,7 @@ function SideBar()
         <hr></hr>
 
         <div className="text-[#FFFFFF] text-[16px] pl-4 border-t border-gray-700">
-          <a href="#Dashboard" className="flex h-10 pt-4">
+          <a href="#Dashboard" className="flex h-10 pt-4 ">
             <div>Dashboard</div>
           </a>
           <a href="#components" className="flex h-10 pt-4">
