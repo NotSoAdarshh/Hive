@@ -49,7 +49,7 @@ function SideBar()
           </a>
         </div>
 
-        <div className="flex pl-4 text-red-600 border-t border-gray-700 mt-auto">
+        <div className=" pl-4 h-18 flex items-center text-red-600 border-t border-gray-700 mt-auto">
           <div>Log Out</div>
         </div>
 

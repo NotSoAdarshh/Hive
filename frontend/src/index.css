@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+:root {
+  --SurfaceColor: #0A0A0F;
+  --textColor: #ffffff;
+  --gold: #FFD700;
+  --Bgcolour: #050505;
+  --fgColor: #E0E0E0;
+}
