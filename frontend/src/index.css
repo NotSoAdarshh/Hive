@@ -1,9 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --SurfaceColor: #0A0A0F;
-  --textColor: #ffffff;
-  --gold: #FFD700;
-  --Bgcolour: #050505;
-  --fgColor: #E0E0E0;
+
+@theme {
+  --color-bg: #050505;
+  --color-surface: #0A0A0F;
+  --color-fg: #E0E0E0;
+  --color-heading: #FFFFFF;
+  --color-border: #F4C430;
+  --color-gold: #FFD700;
+  --color-circuit: #F4C4302E;
+
+
+  --font-orbitron: "Orbitron";
+  --font-mono : "JetBrains Mono", monospace;
+  --font-rajdhani: "Rajdhani", sans-serif;
 }
