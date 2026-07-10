@@ -3,9 +3,9 @@ import { Search, Bell } from 'lucide-react';
 
 function SearchBar() {
   return (
-    <div className="w-full flex items-center justify-between gap-4">
+    <div className="w-full flex items-center justify-between gap-4  sticky top-0 ">
       
-      <div className="w-full max-w-[450px] relative group">
+      <div className="w-full max-w-112.5 relative group">
         <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-zinc-500 group-focus-within:text-[#facc15] transition-colors">
           <Search size={16} />
         </span>

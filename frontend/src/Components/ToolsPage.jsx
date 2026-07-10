@@ -138,11 +138,11 @@ function ToolsPage() {
       {/* The mobile sidebar functionality is to be added into the sidebar component itself this is just a temporay solution */}
     <div className="flex h-dvh w-full overflow-hidden bg-bg">
       {/* Desktop sidebar */}
-      <div className="hidden shrink-0 md:block">
+      {/* <div className="hidden shrink-0 md:block">
         <SideBar />
       </div>
 
-    {/* //mobile sidebar */}
+    
 
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
@@ -163,10 +163,10 @@ function ToolsPage() {
             </button>
           </div>
         </div>
-      )}
+      )} */}
       <div className="flex min-w-0 flex-1 flex-col">
 
-        <header className="relative flex h-16 shrink-0 items-center justify-between border-b border-gray-800 px-4">
+        {/* <header className="relative flex h-16 shrink-0 items-center justify-between border-b border-gray-800 px-4">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
@@ -180,7 +180,7 @@ function ToolsPage() {
             <SearchBar />
           </div>
 
-        </header>
+        </header> */}
 
 
         <main className="flex-1 overflow-y-auto px-4 py-6 md:px-8">
