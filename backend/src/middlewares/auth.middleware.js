@@ -38,7 +38,7 @@ export const verifyMember = asyncHandler(async (req, res, next) => {
 });
 
 
-export const verifyRole = (requiredRoles) => asyncHandler(async (req, res, next) => {
+export const verifyRole = (...requiredRoles) => asyncHandler(async (req, res, next) => {
     const member = req.member;
 
     if (!requiredRoles.includes(member.role)) {
