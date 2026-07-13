@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema(
   {},
   {
-    collection: "user", // This is the important part
+    collection: "user",
     strict: false,
   }
 );
