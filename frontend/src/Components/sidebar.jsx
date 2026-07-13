@@ -1,11 +1,21 @@
 import Logo from "../assets/Site Assets/Logo.png"
-import DefaultPFP from "../assets/Site Assets/DefaultUserPhoto.png"
 import { ChevronRight, ChevronLeft, LayoutDashboard, Bell, ChartColumn, History, Wrench, Package, LogOut } from "lucide-react"
 import { useState } from "react"
 
-function SideBar() {
+function SideBar({ session, onSignOut }) {
 
   const [isCollapsed, setisCollapsed] = useState(true)
+  const user = session?.user;
+  const displayName = user?.name || user?.email?.split("@")[0] || "ERS Member";
+  const displayEmail = user?.email || "Google account";
+  const avatarSrc = user?.image;
+  const avatarFallback = displayName
+    .split(" ")
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
   return (
     <>
 
@@ -34,11 +44,17 @@ function SideBar() {
         {!isCollapsed &&
           <div className="h-18 pl-4 pr-4 border-t border-gray-800 flex items-center">
             <div className="flex">
-              <div className="h-10 w-10"><img src={DefaultPFP} alt="pfp" className="rounded-full object-cover" /></div>
+              <div className="h-10 w-10 overflow-hidden rounded-full border border-border/30 bg-gold/10 flex items-center justify-center text-xs font-bold text-gold">
+                {avatarSrc ? (
+                  <img src={avatarSrc} alt={displayName} className="h-full w-full rounded-full object-cover" />
+                ) : (
+                  <span>{avatarFallback}</span>
+                )}
+              </div>
               <div className="flex flex-col pl-2">
-                <div className="text-heading text-[18px] font-medium leading-tight">John Doe</div>
+                <div className="text-heading text-[18px] font-medium leading-tight">{displayName}</div>
 
-                <div className="text-gray-400 text-[12px] font-mono mt-0.5">25BEC004</div>
+                <div className="text-gray-400 text-[12px] font-mono mt-0.5">{displayEmail}</div>
               </div>
             </div>
           </div>
@@ -72,13 +88,17 @@ function SideBar() {
 
         </div>
 
-        <div className={`px-4 h-18 flex items-center  text-heading border-t border-gray-800 mt-auto hover:text-red-600 transition-colors cursor-pointer ${isCollapsed && "justify-center"}`} >
+        <button
+          type="button"
+          onClick={onSignOut}
+          className={`px-4 h-18 w-full flex items-center text-heading border-t border-gray-800 mt-auto hover:text-red-600 transition-colors cursor-pointer ${isCollapsed && "justify-center"}`}
+        >
           <LogOut size={18} />
           {
             !isCollapsed &&
             <div className="text-[16px] font-medium px-3">Log Out</div>
           }
-        </div>
+        </button>
 
        </div>  
        </>

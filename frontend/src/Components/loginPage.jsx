@@ -1,8 +1,6 @@
-import Login from "../assets/Site Assets/login_img.png";
 import Logo from "../assets/Site Assets/Logo.png";
+import { authClient } from "../lib/auth-client";
 import {
-  User,
-  Lock,
   Zap,
   GitBranch,
   Boxes,
@@ -10,9 +8,50 @@ import {
   ArrowRight,
   ShieldCheck,
 } from "lucide-react";
+import { useState } from "react";
 
 function LoginPage() {
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [authError, setAuthError] = useState("");
+  const params = new URLSearchParams(window.location.search);
+
+  const error = params.get("error");
+
+  
+  const startGoogleAuth = async () => {
+    setIsSigningIn(true);
+    setAuthError("");
+
+    try {
+      const callbackURL = `${window.location.origin}/`;
+      const { data, error } = await authClient.signIn.social({
+        provider: "google",
+        callbackURL,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.url) {
+        window.location.assign(data.url);
+        return;
+      }
+
+      window.location.assign(callbackURL);
+    } catch (err) {
+      setAuthError(
+        err instanceof Error
+          ? err.message
+          : "Unable to start Google sign-in right now."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
+    
     <div className="min-h-screen w-full bg-bg text-fg font-mono relative overflow-hidden">
       {/* ── Ambient background glow ── */}
       <div
@@ -144,6 +183,13 @@ function LoginPage() {
               </p>
             </div>
 
+             {error === "NOT_AN_ERS_MEMBER" && (
+                  <div className="text-red-500">
+                      This Google account is not registered as an ERS member.
+                      Please contact an ERS coordinator.
+                  </div>
+              )}
+
             {/* Card */}
             <div className="relative rounded-2xl border border-border/40 bg-surface/80 backdrop-blur-xl p-6 sm:p-8 shadow-[0_0_60px_-15px] shadow-circuit">
               {/* Top accent bar */}
@@ -157,69 +203,27 @@ function LoginPage() {
 
              
 
-              <form action="" className="font-rajdhani space-y-5">
-                {/* Roll Number */}
-                <div>
-                  <label
-                    htmlFor="rollNumber"
-                    className="block mb-2 text-xs font-mono tracking-[0.18em] uppercase text-gold"
-                  >
-                    Roll Number
-                  </label>
-                  <div className="group flex items-center gap-3 rounded-lg border border-border/30 bg-bg/60 px-4 py-3 transition focus-within:border-gold focus-within:shadow-[0_0_0_3px] focus-within:shadow-circuit">
-                    <User size={16} className="text-gold shrink-0" />
-                    <input
-                      id="rollNumber"
-                      name="rollNumber"
-                      type="text"
-                      placeholder="Enter your roll number"
-                      className="w-full bg-transparent text-fg placeholder:text-fg/30 outline-none text-base"
-                    />
+              <div className="font-rajdhani space-y-5">
+                <div className="rounded-xl border border-border/30 bg-bg/60 p-4 text-sm text-fg/75">
+                  <div className="flex items-center gap-3">
+                    <ShieldCheck size={18} className="text-gold shrink-0" />
+                    <div>
+                      <p className="font-semibold text-fg">Google only access</p>
+                    </div>
                   </div>
                 </div>
 
-                {/* Password */}
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="block mb-2 text-xs font-mono tracking-[0.18em] uppercase text-gold"
-                  >
-                    Password
-                  </label>
-                  <div className="group flex items-center gap-3 rounded-lg border border-border/30 bg-bg/60 px-4 py-3 transition focus-within:border-gold focus-within:shadow-[0_0_0_3px] focus-within:shadow-circuit">
-                    <Lock size={16} className="text-gold shrink-0" />
-                    <input
-                      id="password"
-                      name="password"
-                      type="password"
-                      placeholder="Enter your password"
-                      className="w-full bg-transparent text-fg placeholder:text-fg/30 outline-none text-base"
-                    />
+                {authError ? (
+                  <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                    {authError}
                   </div>
-                </div>
+                ) : null}
 
-                {/* Row: remember + forgot */}
-                <div className="flex items-center justify-between text-xs font-mono">
-                  <label className="flex items-center gap-2 text-fg/60 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      name="remember"
-                      className="h-3.5 w-3.5 accent-gold"
-                    />
-                    <span className="tracking-wider uppercase">Remember</span>
-                  </label>
-                  <button
-                    type="button"
-                    className="text-fg/70 hover:text-gold transition tracking-wider uppercase"
-                  >
-                    Forgot Password?
-                  </button>
-                </div>
-
-                {/* Submit */}
                 <button
-                  type="submit"
-                  className="group relative w-full overflow-hidden rounded-lg font-orbitron font-bold tracking-[0.15em] uppercase text-bg py-3 transition active:scale-[0.99]"
+                  type="button"
+                  onClick={startGoogleAuth}
+                  disabled={isSigningIn}
+                  className="group relative w-full overflow-hidden rounded-lg font-orbitron font-bold tracking-[0.15em] uppercase text-bg py-3 transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
                   style={{
                     background:
                       "linear-gradient(135deg, #FFD700 0%, #F4C430 50%, #FFD700 100%)",
@@ -227,7 +231,7 @@ function LoginPage() {
                   }}
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2">
-                    Login
+                    {isSigningIn ? "Opening Google..." : "Sign In with Google"}
                     <ArrowRight
                       size={16}
                       className="transition-transform group-hover:translate-x-1"
@@ -242,7 +246,7 @@ function LoginPage() {
                     }}
                   />
                 </button>
-              </form>
+              </div>
             </div>
 
             <p className="text-center text-[11px] font-mono tracking-[0.2em] uppercase text-fg/40">

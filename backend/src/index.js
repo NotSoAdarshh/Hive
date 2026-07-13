@@ -1,10 +1,13 @@
-console.log('Starting express backend server...');
-
-import connectDB from "./db/index.js";
-import app from "./app.js";
 import dotenv from "dotenv";
 
 dotenv.config();
+
+console.log('Starting express backend server...');
+
+const [{ default: connectDB }, { default: app }] = await Promise.all([
+    import("./db/index.js"),
+    import("./app.js"),
+]);
 
 const PORT = process.env.PORT || 5000;
 

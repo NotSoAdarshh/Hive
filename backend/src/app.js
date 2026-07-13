@@ -1,13 +1,23 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { auth } from "./lib/auth.js";
+import { toNodeHandler } from "better-auth/node";
 
 const app = express();
+
+const authHandler = toNodeHandler(auth);
 
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
     credentials: true,
 }))
+
+app.use("/api/auth", authHandler);
+
+
+
+console.log('CORS_ORIGIN:', process.env.CORS_ORIGIN); // Log the CORS_ORIGIN value for debugging
 
 app.use(express.json({ 
     limit: "16kb"
