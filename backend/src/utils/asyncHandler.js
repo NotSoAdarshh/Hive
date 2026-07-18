@@ -3,3 +3,4 @@ const asyncHandler = (fn) => (req, res, next) => {
 };
 
 export { asyncHandler };
+export default asyncHandler;

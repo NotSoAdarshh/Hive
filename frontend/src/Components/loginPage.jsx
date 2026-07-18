@@ -46,7 +46,7 @@ function LoginPage() {
           : "Unable to start Google sign-in right now."
       );
     } finally {
-      setLoading(false);
+      setIsSigningIn(false);
     }
   };
 

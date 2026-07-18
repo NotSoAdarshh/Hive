@@ -1,200 +1,202 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import { transactionsApi } from '../lib/api';
+import { useMember } from '../lib/MemberContext';
+import {
+  Package, Clock, AlertTriangle, CheckCircle2, RefreshCw, ArrowRight, Loader2
+} from 'lucide-react';
 
-function DashBoard() {
+function StatusBadge({ status }) {
+  const map = {
+    pending:  { cls: 'bg-amber-900/40 text-amber-400 border-amber-700/40', label: 'PENDING' },
+    approved: { cls: 'bg-blue-900/40 text-blue-400 border-blue-700/40', label: 'APPROVED' },
+    rejected: { cls: 'bg-red-900/40 text-red-400 border-red-700/40', label: 'REJECTED' },
+    returned: { cls: 'bg-emerald-900/40 text-emerald-400 border-emerald-700/40', label: 'RETURNED' },
+    overdue:  { cls: 'bg-red-900/40 text-red-400 border-red-700/40', label: 'OVERDUE' },
+  };
+  const s = map[status] || { cls: 'bg-gray-800 text-gray-400 border-gray-700', label: status?.toUpperCase() };
   return (
-
-    <>
-    <div className="w-full min-h-screen bg-[#050505] text-white overflow-x-hidden font-sans">
-      
-      
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-10 flex flex-col gap-10">
-        
-        
-        <div className="relative w-full min-h-[170px] bg-[#0A0A0F] rounded-[12px] border-x-[1px] border-t-[3px] border-b-[1px] border-[#FFD700] p-6 flex flex-col justify-between sm:flex-row sm:items-center gap-6">
-          <div className="flex items-center gap-5">
-            
-            <div className="w-[64px] h-[64px] rounded-full bg-[#FFD700] flex items-center justify-center relative flex-shrink-0">
-              <div className="w-[32px] h-[32px] relative">
-                <div className="absolute w-[10.67px] h-[10.67px] top-[4px] left-[10.67px] border-[2.67px] border-[#000000E5] rounded-full"></div>
-                <div className="absolute w-[18.67px] h-[8px] top-[20px] left-[6.67px] border-t-[2.67px] border-[#000000E5] rounded-2xl"></div>
-              </div>
-            </div>
-            
-            <div>
-              <h1 className="text-[#F9FAFB] font-semibold text-[20px] leading-tight">John Doe</h1>
-              <p className="text-[#9CA3AF] text-[14px] mt-1 font-mono">Roll No: 2023BCS001</p>
-              <p className="text-[#9CA3AF] text-[14px]">Position: Core Member</p>
-            </div>
-          </div>
-
-         
-          <div className="hidden sm:flex text-left sm:text-right text-sm text-[#9CA3AF] flex-col gap-1 border-t border-[#ffffff05] pt-4 sm:pt-0 sm:border-0">
-            <p className="whitespace-nowrap">2 items borrowed</p>
-            <p className="whitespace-nowrap">1 pending requests</p>
-          </div>
-        </div>
-
-       
-        <div>
-          <div className="mb-5">
-            <h3 className="text-[#9CA3AF] text-[12px] font-semibold tracking-wider uppercase">PENDING RETURNS</h3>
-            <p className="text-[#9CA3AF] text-[14px]">Items awaiting return</p>
-          </div>
-
-          
-          <div className="flex flex-row flex-wrap gap-6 w-full items-stretch">
-    
-    {/* Card 1 - Arduino */}
-    <div className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] box-border min-h-[360px] rounded-[12px] border-[1px] border-white bg-[#0A0A0F] p-5 flex flex-col justify-between">
-              <div>
-                <div className="w-full h-[128px] rounded-[8px] border border-[#ffffff10] overflow-hidden bg-zinc-900 mb-4">
-                  <img 
-                    src="null" 
-                    alt="Arduino Uno R3" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-[#F9FAFB] font-semibold text-[18px] truncate">Arduino Uno R3</h4>
-                    <p className="text-[#9CA3AF] text-[14px] mt-0.5 truncate">Borrowed for robotics competition project</p>
-                    <p className="text-[#9CA3AF] text-[13px] mt-1">3 days remaining</p>
-                  </div>
-                  <div className="bg-[#064E3B] rounded-[4px] px-2.5 py-1 flex justify-center items-center flex-shrink-0">
-                    <span className="text-[#10B981] text-[11px] font-bold tracking-wider">ON TIME</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex flex-col gap-3 mt-4">
-                <div className="flex items-center gap-6 text-[#9CA3AF] text-[13px] border-t border-[#ffffff10] pt-3">
-                  <p className="whitespace-nowrap">Qty : 2</p>
-                  <p className="whitespace-nowrap">📅 Due: 6/10/2026</p>
-                </div>
-                <button className="w-full h-[40px] bg-[#FFD700] rounded-[6px] text-black font-medium cursor-pointer hover:bg-[#ffe240] transition-colors">
-                  Return Item
-                </button>
-              </div>
-            </div>
-
-            {/* Card 2 - Digital Multimeter */}
-            <div className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] box-border min-h-[360px] rounded-[12px] border-[1px] border-white bg-[#0A0A0F] p-5 flex flex-col justify-between">
-              <div>
-                <div className="w-full h-[128px] rounded-[8px] border border-[#ffffff10] overflow-hidden bg-zinc-900 mb-4">
-                  <img 
-                    src="null" 
-                    alt="Digital Multimeter" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-[#F9FAFB] font-semibold text-[18px] truncate">Digital Multimeter</h4>
-                    <p className="text-[#9CA3AF] text-[14px] mt-0.5 truncate">Testing circuit boards</p>
-                    <p className="text-[#9CA3AF] text-[13px] mt-1">3 days remaining</p>
-                  </div>
-                  <div className="bg-[#7F1D1D] rounded-[4px] px-2.5 py-1 flex justify-center items-center flex-shrink-0">
-                    <span className="text-[#EF4444] text-[11px] font-bold tracking-wider">OVERDUE</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex flex-col gap-3 mt-4">
-                <div className="flex items-center gap-6 text-[#9CA3AF] text-[13px] border-t border-[#ffffff10] pt-3">
-                  <p className="whitespace-nowrap">Qty : 1</p>
-                  <p className="whitespace-nowrap">📅 Due: 6/10/2026</p>
-                </div>
-                <button className="w-full h-[40px] bg-[#FFD700] rounded-[6px] text-black font-medium cursor-pointer hover:bg-[#ffe240] transition-colors">
-                  Return Item
-                </button>
-              </div>
-            </div>
-
-             {/* One more card*/}
-
-           <div className="w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] box-border min-h-[360px] rounded-[12px] border-[1px] border-white bg-[#0A0A0F] p-5 flex flex-col justify-between">
-              <div>
-                <div className="w-full h-[128px] rounded-[8px] border border-[#ffffff10] overflow-hidden bg-zinc-900 mb-4">
-                  <img 
-                    src="null" 
-                    alt="Arduino Uno R3" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <h4 className="text-[#F9FAFB] font-semibold text-[18px] truncate">Arduino Uno R3</h4>
-                    <p className="text-[#9CA3AF] text-[14px] mt-0.5 truncate">Borrowed for robotics competition project</p>
-                    <p className="text-[#9CA3AF] text-[13px] mt-1">3 days remaining</p>
-                  </div>
-                  <div className="bg-[#064E3B] rounded-[4px] px-2.5 py-1 flex justify-center items-center flex-shrink-0">
-                    <span className="text-[#10B981] text-[11px] font-bold tracking-wider">ON TIME</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex flex-col gap-3 mt-4">
-                <div className="flex items-center gap-6 text-[#9CA3AF] text-[13px] border-t border-[#ffffff10] pt-3">
-                  <p className="whitespace-nowrap">Qty : 2</p>
-                  <p className="whitespace-nowrap">📅 Due: 6/10/2026</p>
-                </div>
-                <button className="w-full h-[40px] bg-[#FFD700] rounded-[6px] text-black font-medium cursor-pointer hover:bg-[#ffe240] transition-colors">
-                  Return Item
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-
-        {/* Section: Borrow Requests */}
-        <div className="pb-12">
-          <div className="mb-5">
-            <h3 className="text-[#9CA3AF] text-[12px] font-semibold tracking-wider uppercase">BORROW REQUESTS</h3>
-            <p className="text-[#9CA3AF] text-[14px]">Your current requests</p>
-          </div>
-          
-          <div className="relative w-full max-w-[358px] min-h-[320px] rounded-[12px] border-[1px] border-white bg-[#0A0A0F] p-5 flex flex-col justify-between">
-          
-            <div>
-              <div className="w-full h-[128px] rounded-[8px] border border-zinc-800 overflow-hidden bg-zinc-900 mb-4">
-                <img 
-                  src="null" 
-                  alt="L298N Motor Driver" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              <div className="flex items-start justify-between gap-2">
-                <div className="max-w-[70%]">
-                  <h4 className="text-[#F9FAFB] font-semibold text-[18px] truncate">L298N Motor Driver</h4>
-                  <p className="text-[#9CA3AF] text-[14px] mt-0.5">DC motor control project</p>
-                </div>
-                <div className="bg-[#78350F] rounded-[4px] px-2.5 py-1 flex justify-center items-center flex-shrink-0">
-                  <span className="text-[#F59E0B] text-[11px] font-bold tracking-wider">PENDING</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-16 text-[#9CA3AF] text-[13px] border-t border-[#ffffff10] pt-3 mt-4">
-              <p className="whitespace-nowrap">Qty : 1</p>
-              <p className="whitespace-nowrap">📅 Due: 6/10/2026</p>
-            </div>
-          </div>
-
-        </div>
-</div>
-</div>
-
-      
-     
-      
-   </>
+    <span className={`text-[10px] font-bold tracking-wider px-2 py-0.5 rounded border ${s.cls}`}>
+      {s.label}
+    </span>
   );
 }
 
-export default DashBoard;
+function DaysRemaining({ expectedReturnDate }) {
+  const days = Math.ceil((new Date(expectedReturnDate) - new Date()) / 86400000);
+  if (days < 0) return <span className="text-red-400 text-xs font-mono">{Math.abs(days)}d overdue</span>;
+  if (days === 0) return <span className="text-amber-400 text-xs font-mono">Due today</span>;
+  return <span className="text-emerald-400 text-xs font-mono">{days}d remaining</span>;
+}
+
+function TransactionCard({ tx }) {
+  const firstItem = tx.items?.[0];
+  const itemName = firstItem?.item?.name || 'Unknown Item';
+  const itemImage = firstItem?.item?.image;
+  const extraCount = tx.items.length - 1;
+
+  return (
+    <div className="flex flex-col rounded-xl border border-gray-800 bg-surface hover:border-gold/30 transition-colors p-4 gap-3">
+      {/* Image */}
+      <div className="h-32 w-full rounded-lg overflow-hidden bg-gray-900 border border-gray-800">
+        {itemImage ? (
+          <img src={itemImage} alt={itemName} className="h-full w-full object-cover" />
+        ) : (
+          <div className="h-full w-full flex items-center justify-center">
+            <Package size={32} className="text-gray-700" />
+          </div>
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <h4 className="text-heading font-semibold text-sm truncate">{itemName}</h4>
+          {extraCount > 0 && (
+            <p className="text-gray-500 text-xs">+{extraCount} more item{extraCount > 1 ? 's' : ''}</p>
+          )}
+        </div>
+        <StatusBadge status={tx.status} />
+      </div>
+
+      {/* Meta */}
+      <div className="flex items-center justify-between text-xs text-gray-500 font-mono border-t border-gray-800 pt-2">
+        <span>Qty: {tx.items.reduce((s, i) => s + i.quantity, 0)}</span>
+        {tx.expectedReturnDate && tx.status === 'approved' && (
+          <DaysRemaining expectedReturnDate={tx.expectedReturnDate} />
+        )}
+        {tx.expectedReturnDate && tx.status !== 'approved' && (
+          <span>{new Date(tx.expectedReturnDate).toLocaleDateString()}</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ icon: Icon, label, value, color }) {
+  return (
+    <div className="flex items-center gap-4 bg-surface rounded-xl border border-gray-800 p-4">
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${color}`}>
+        <Icon size={20} />
+      </div>
+      <div>
+        <div className="text-2xl font-bold text-heading">{value}</div>
+        <div className="text-xs text-gray-500 mt-0.5">{label}</div>
+      </div>
+    </div>
+  );
+}
+
+export default function DashBoard() {
+  const { member } = useMember();
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    transactionsApi.getMy()
+      .then((res) => setTransactions(res.data || []))
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const active = transactions.filter((t) => t.status === 'approved');
+  const pending = transactions.filter((t) => t.status === 'pending');
+  const overdue = transactions.filter((t) => t.status === 'overdue');
+  const returned = transactions.filter((t) => t.status === 'returned');
+
+  const displayName = member?.name || 'Member';
+  const roleLabel = { coordinator: 'Coordinator', inventory_manager: 'Inventory Manager', member: 'Member' }[member?.role] || '';
+
+  return (
+    <div className="w-full min-h-screen bg-bg text-fg px-4 md:px-8 py-8 flex flex-col gap-8">
+      {/* Header */}
+      <div className="relative rounded-2xl border border-t-2 border-gold/60 bg-surface p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        style={{ boxShadow: '0 0 40px -10px rgba(255,215,0,0.08)' }}>
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-full bg-gold flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 relative">
+              <div className="absolute w-[10px] h-[10px] top-[3px] left-[9px] border-[2.5px] border-black rounded-full" />
+              <div className="absolute w-[18px] h-[7px] top-[17px] left-[5px] border-t-[2.5px] border-black rounded-2xl" />
+            </div>
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-heading">Welcome back, {displayName}</h1>
+            <p className="text-gray-500 text-xs font-mono mt-0.5">{roleLabel}</p>
+          </div>
+        </div>
+        <div className="text-sm text-gray-500 space-y-1 text-right">
+          <p>{active.length} item{active.length !== 1 ? 's' : ''} borrowed</p>
+          <p>{pending.length} pending request{pending.length !== 1 ? 's' : ''}</p>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard icon={Package} label="Currently Borrowed" value={active.length} color="bg-blue-900/40 text-blue-400" />
+        <StatCard icon={Clock} label="Pending Requests" value={pending.length} color="bg-amber-900/40 text-amber-400" />
+        <StatCard icon={AlertTriangle} label="Overdue" value={overdue.length} color="bg-red-900/40 text-red-400" />
+        <StatCard icon={CheckCircle2} label="Total Returns" value={returned.length} color="bg-emerald-900/40 text-emerald-400" />
+      </div>
+
+      {loading && (
+        <div className="flex items-center justify-center py-20 text-gray-500">
+          <Loader2 size={24} className="animate-spin mr-2" />
+          <span className="text-sm">Loading your transactions...</span>
+        </div>
+      )}
+
+      {error && (
+        <div className="rounded-xl border border-red-800/40 bg-red-900/10 px-4 py-3 text-red-400 text-sm">{error}</div>
+      )}
+
+      {/* Active borrows */}
+      {!loading && active.length > 0 && (
+        <section>
+          <div className="mb-4">
+            <h2 className="text-xs font-semibold tracking-widest uppercase text-gray-500">Currently Borrowed</h2>
+            <p className="text-gray-600 text-xs mt-0.5">Items you currently have</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {active.map((tx) => <TransactionCard key={tx._id} tx={tx} />)}
+          </div>
+        </section>
+      )}
+
+      {/* Pending requests */}
+      {!loading && pending.length > 0 && (
+        <section>
+          <div className="mb-4">
+            <h2 className="text-xs font-semibold tracking-widest uppercase text-gray-500">Pending Requests</h2>
+            <p className="text-gray-600 text-xs mt-0.5">Awaiting approval</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {pending.map((tx) => <TransactionCard key={tx._id} tx={tx} />)}
+          </div>
+        </section>
+      )}
+
+      {/* Overdue */}
+      {!loading && overdue.length > 0 && (
+        <section className="pb-4">
+          <div className="mb-4">
+            <h2 className="text-xs font-semibold tracking-widest uppercase text-red-500">⚠ Overdue Items</h2>
+            <p className="text-gray-600 text-xs mt-0.5">Please return these immediately</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {overdue.map((tx) => <TransactionCard key={tx._id} tx={tx} />)}
+          </div>
+        </section>
+      )}
+
+      {!loading && transactions.length === 0 && !error && (
+        <div className="flex flex-col items-center justify-center py-20 gap-3 text-gray-600">
+          <Package size={40} className="text-gray-800" />
+          <p className="text-sm">No transactions yet.</p>
+          <a href="/inventory" className="flex items-center gap-1.5 text-gold text-xs hover:underline">
+            Browse inventory <ArrowRight size={12} />
+          </a>
+        </div>
+      )}
+    </div>
+  );
+}

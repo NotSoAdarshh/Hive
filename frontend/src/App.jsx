@@ -1,62 +1,79 @@
-import { React, useState } from "react";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-
-import Sidebar from "./Components/sidebar";
-import SearchBar from "./Components/searchBar";
-import NotificationComponent from "./Components/notificationComponent";
 import LoginPage from "./Components/loginPage";
-import NotificationPage from "./Components/NotificationPage";
-import ToolsPage from "./Components/ToolsPage";
-import ReportPage from "./Components/report";
 import DashBoard from "./Components/DashBoard";
+import InventoryPage from "./Components/InventoryPage";
 import HistoryPage from "./Components/HistoryPage";
-import ComponentPage from "./Components/ComponentsPage";
+import AdminPage from "./Components/AdminPage";
+import Sidebar from "./Components/sidebar";
+import { authClient } from "./lib/auth-client";
+import { MemberProvider, useMember } from "./lib/MemberContext";
 
-function Layout() {
-  const [searchQuery, setSearchQuery] = useState("");
-
+// ── Layout: renders inside RouterProvider so useLocation() works in Sidebar ──
+function AppLayout({ session, onSignOut }) {
+  const { member } = useMember();
   return (
     <div className="flex w-screen h-screen overflow-hidden bg-bg">
-      
-      <Sidebar />
-      
-      <div className="flex-1 flex flex-col h-full relative">
-        
-        <div className="w-full shrink-0 p-6 pb-4 bg-bg z-10 border-b border-gray-800/50">
-          <SearchBar query={searchQuery} setQuery={setSearchQuery} />
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-6">
-          <Outlet context={{ searchQuery }} />
-        </div>
-        
+      <Sidebar session={session} member={member} onSignOut={onSignOut} />
+      <div className="flex-1 h-full overflow-y-auto">
+        <Outlet />
       </div>
     </div>
   );
 }
 
-function App() {
-  const [isLogin, setisNotLogin] = useState(true);
+function Shell({ session }) {
+  const { loading } = useMember();
+  const handleSignOut = () => authClient.signOut();
 
+  // Router must be created once — stable reference via useMemo pattern is fine
+  // since session won't change while Shell is mounted
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Layout />,
+      element: <AppLayout session={session} onSignOut={handleSignOut} />,
       children: [
-        { path: "/", element: <DashBoard /> },
-        { path: "/reports", element: <ReportPage /> },
-        { path: "/history", element: <HistoryPage /> },
-        { path: "/tools", element: <ToolsPage /> },
-        { path: "/notifications", element: <NotificationPage /> },
-        { path: "/components", element: <ComponentPage /> },
+        { index: true, element: <DashBoard /> },
+        { path: "inventory", element: <InventoryPage /> },
+        { path: "history", element: <HistoryPage /> },
+        { path: "admin", element: <AdminPage /> },
       ],
     },
   ]);
 
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-bg text-fg font-mono">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold border-t-transparent" />
+          <span className="text-xs tracking-widest uppercase text-fg/50">Loading profile...</span>
+        </div>
+      </div>
+    );
+  }
+
+  return <RouterProvider router={router} />;
+}
+
+function App() {
+  const { data: session, isPending } = authClient.useSession();
+
+  if (isPending) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-bg text-fg font-mono">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold border-t-transparent" />
+          <span className="text-xs tracking-widest uppercase text-fg/50">Verifying session...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) return <LoginPage />;
+
   return (
-    <>
-      {!isLogin ? <LoginPage /> : <RouterProvider router={router} />}
-    </>
+    <MemberProvider session={session}>
+      <Shell session={session} />
+    </MemberProvider>
   );
 }
 

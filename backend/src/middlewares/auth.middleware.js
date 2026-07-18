@@ -1,7 +1,7 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js";
 import {auth} from "../lib/auth.js";
-import Member from "../models/Member.js";
+import Member from "../models/Members.model.js";
 
 export const verifySession = asyncHandler(async (req, res, next) => {
     const sessionData = await auth.api.getSession(
