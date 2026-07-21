@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { inventoryApi, transactionsApi } from '../lib/api';
+import { inventoryApi, transactionsApi, storageApi } from '../lib/api';
 import { useMember, useIsManager, useIsCoordinator } from '../lib/MemberContext';
 import {
   Search, Plus, X, Loader2, Package, Edit2, Trash2, ShieldAlert,
@@ -116,6 +116,11 @@ function ItemFormModal({ item, onClose, onSuccess }) {
   const [preview, setPreview] = useState(item?.image || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [storages, setStorages] = useState([]);
+
+  useEffect(() => {
+    storageApi.getAll().then(res => setStorages(res.data || [])).catch(() => {});
+  }, []);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -177,6 +182,17 @@ function ItemFormModal({ item, onClose, onSuccess }) {
             <div><label className="text-xs text-gray-400 block mb-1">Total Qty</label><input type="number" className={inputCls} value={form.totalQuantity} onChange={(e) => set('totalQuantity', e.target.value)} /></div>
             <div><label className="text-xs text-gray-400 block mb-1">Available</label><input type="number" className={inputCls} value={form.availableQuantity} onChange={(e) => set('availableQuantity', e.target.value)} /></div>
             <div><label className="text-xs text-gray-400 block mb-1">Damaged</label><input type="number" className={inputCls} value={form.damagedQuantity} onChange={(e) => set('damagedQuantity', e.target.value)} /></div>
+          </div>
+          <div>
+            <label className="text-xs text-gray-400 block mb-1">Storage Box</label>
+            <select className={inputCls} value={form.storageId} onChange={(e) => set('storageId', e.target.value)}>
+              <option value="">No Storage Assigned</option>
+              {storages.map(s => (
+                <option key={s._id} value={s._id}>
+                  Box #{s.storageNumber} {s.name ? `- ${s.name}` : ''}
+                </option>
+              ))}
+            </select>
           </div>
           {error && <p className="text-red-400 text-xs flex items-center gap-1"><AlertCircle size={12}/>{error}</p>}
         </div>
@@ -287,6 +303,13 @@ function ItemCard({ item, isManager, isCoordinator, onBorrow, onEdit, onDelete, 
           <StatusBadge item={item} />
         </div>
         <p className="text-gray-500 text-xs leading-relaxed line-clamp-2">{item.description}</p>
+        
+        {item.storageId && (
+          <div className="text-[11px] text-gray-400 bg-gray-800/50 px-2 py-1.5 rounded-lg border border-gray-800 flex items-center gap-1.5">
+            <Package size={12} className="text-gold" />
+            <span>Box #{item.storageId.storageNumber}{item.storageId.name ? ` - ${item.storageId.name}` : ''}</span>
+          </div>
+        )}
         <div className="flex items-center justify-between text-xs text-gray-500 font-mono border-t border-gray-800 pt-2">
           <span>Available: <span className="text-heading">{item.availableQuantity}</span></span>
           <span>Total: {item.totalQuantity}</span>

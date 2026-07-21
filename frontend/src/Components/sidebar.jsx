@@ -1,7 +1,7 @@
 import Logo from "../assets/Site Assets/Logo.png";
 import {
   ChevronRight, ChevronLeft, LayoutDashboard,
-  Package, History, Settings, LogOut, Users, ShieldCheck
+  Package, History, Settings, LogOut, Users, ShieldCheck, Box
 } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -9,6 +9,7 @@ import { useLocation } from "react-router-dom";
 const NAV_ITEMS = [
   { href: "/", icon: LayoutDashboard, label: "Dashboard", roles: ["member", "inventory_manager", "coordinator"] },
   { href: "/inventory", icon: Package, label: "Inventory", roles: ["member", "inventory_manager", "coordinator"] },
+  { href: "/storage", icon: Box, label: "Storage Boxes", roles: ["inventory_manager", "coordinator"] },
   { href: "/history", icon: History, label: "My History", roles: ["member", "inventory_manager", "coordinator"] },
   { href: "/admin", icon: ShieldCheck, label: "Admin Panel", roles: ["inventory_manager", "coordinator"] },
 ];

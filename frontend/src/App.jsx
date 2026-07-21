@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import LoginPage from "./Components/loginPage";
 import DashBoard from "./Components/DashBoard";
 import InventoryPage from "./Components/InventoryPage";
+import StoragePage from "./Components/StoragePage";
 import HistoryPage from "./Components/HistoryPage";
 import AdminPage from "./Components/AdminPage";
 import Sidebar from "./Components/sidebar";
@@ -34,6 +35,7 @@ function Shell({ session }) {
       children: [
         { index: true, element: <DashBoard /> },
         { path: "inventory", element: <InventoryPage /> },
+        { path: "storage", element: <StoragePage /> },
         { path: "history", element: <HistoryPage /> },
         { path: "admin", element: <AdminPage /> },
       ],

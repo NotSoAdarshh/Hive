@@ -2,6 +2,7 @@ import asyncHandler from '../utils/asyncHandler.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import Inventory from '../models/Inventory.model.js';
+import Storage from '../models/Storage.model.js';
 import { cloudinary } from '../utils/cloudinary.js';
 
 // ─── GET all inventory items ──────────────────────────────────────────────────
@@ -54,6 +55,8 @@ export const createItem = asyncHandler(async (req, res) => {
     storageId: storageId || null,
   });
 
+  await item.populate('storageId', 'storageNumber name');
+
   return res.status(201).json(new ApiResponse(201, 'Item created', item));
 });
 
@@ -67,7 +70,10 @@ export const updateItem = asyncHandler(async (req, res) => {
   if (name) item.name = name.trim();
   if (description) item.description = description;
   if (category) item.category = category;
-  if (storageId !== undefined) item.storageId = storageId || null;
+  
+  if (storageId !== undefined) {
+    item.storageId = storageId || null;
+  }
 
   if (totalQuantity != null) item.totalQuantity = Number(totalQuantity);
   if (availableQuantity != null) item.availableQuantity = Number(availableQuantity);
@@ -87,6 +93,7 @@ export const updateItem = asyncHandler(async (req, res) => {
   }
 
   await item.save();
+  await item.populate('storageId', 'storageNumber name');
   return res.status(200).json(new ApiResponse(200, 'Item updated', item));
 });
 
